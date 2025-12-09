@@ -1,0 +1,25 @@
+**/.bundle/
+**/doc/
+**/log/*.log
+**/pkg/
+**/tmp/
+**/dummy/db/*.sqlite3
+**/dummy/db/*.sqlite3-*
+**/dummy/log/*.log
+**/dummy/storage/
+**/dummy/tmp/
+node_modules/
+# Emacs temporary files
+*~
+\#*
+*.elc
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Editor folders/files
+**/.vscode
+.idea

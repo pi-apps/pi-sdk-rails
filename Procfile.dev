@@ -1,0 +1,8 @@
+web: bin/rails server
+js: bin/importmap watch
+
+# For hot reload: 'js' will watch changes in both engine and dummy app javascript directories.
+# If you move controllers in the engine (app/javascript/pinetwork/rails/controllers), they will be watched and reloaded for local development.
+
+
+
