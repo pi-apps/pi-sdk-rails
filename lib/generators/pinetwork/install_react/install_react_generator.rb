@@ -1,6 +1,6 @@
 require 'rails/generators/base'
 
-class Pinetwork::InstallReactGenerator < Rails::Generators::Base
+class PiSdk::InstallReactGenerator < Rails::Generators::Base
   source_root File.expand_path('templates', __dir__)
 
   desc 'Adds Pi Network engine configuration for React/JSBundling (esbuild), routes, callback stubs, and Pi SDK integration to your app.'
@@ -15,13 +15,13 @@ class Pinetwork::InstallReactGenerator < Rails::Generators::Base
 
   def add_engine_routes
     routes = File.read('config/routes.rb')
-    unless routes.include?('mount Pinetwork::Rails::Engine')
+    unless routes.include?('mount PiSdk::Engine')
       inject_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do
-        "  mount Pinetwork::Rails::Engine => \"/pinetwork-rails\"\n"
+        "  mount PiSdk::Engine => \"/pinetwork-rails\"\n"
       end
-      say '[Pinetwork] Mounted engine route in config/routes.rb', :green
+      say '[PiSdk] Mounted engine route in config/routes.rb', :green
     else
-      say '[Pinetwork] Engine mount already exists in config/routes.rb', :yellow
+      say '[PiSdk] Engine mount already exists in config/routes.rb', :yellow
     end
   end
 
@@ -32,15 +32,15 @@ class Pinetwork::InstallReactGenerator < Rails::Generators::Base
       inject_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do
         routes_block
       end
-      say '[Pinetwork] Added default Pi payment routes to config/routes.rb', :green
+      say '[PiSdk] Added default Pi payment routes to config/routes.rb', :green
     else
-      say '[Pinetwork] Pi payment routes already present in config/routes.rb', :yellow
+      say '[PiSdk] Pi payment routes already present in config/routes.rb', :yellow
     end
   end
 
   # No gem management for JSbundling/React
   def add_gems
-    say '[Pinetwork] (JSbundling/React) Skipping Gem dependencies. Please ensure jsbundling-rails, esbuild, and React are installed.', :yellow
+    say '[PiSdk] (JSbundling/React) Skipping Gem dependencies. Please ensure jsbundling-rails, esbuild, and React are installed.', :yellow
   end
 
   def add_controller_callback_stub

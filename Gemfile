@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in pinetwork-rails.gemspec.
+# Specify your gem's dependencies in pi-sdk-rails.gemspec.
 gemspec
 
 gem "puma"

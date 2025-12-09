@@ -3,12 +3,12 @@ Rails.application.routes.draw do
   get "home/index"
   get "home/reactdemo"
   root to: "home#index"
-  mount Pinetwork::Rails::Engine => "/pinetwork-rails"
+  mount PiSdk::Engine => "/pi-sdk-rails"
   # Direct mapping to engine pi_payment controller actions for override/testing:
-  post '/pi_payment/approve', to: 'pinetwork/rails/pi_payment#approve'
-  post '/pi_payment/complete', to: 'pinetwork/rails/pi_payment#complete'
-  post '/pi_payment/cancel',   to: 'pinetwork/rails/pi_payment#cancel'
-  post '/pi_payment/error',    to: 'pinetwork/rails/pi_payment#error'
-  post '/pi_payment/incomplete', to: 'pinetwork/rails/pi_payment#incomplete'
-  get  '/pi_payment/me',       to: 'pinetwork/rails/pi_payment#me'
+  post '/pi_payment/approve', to: 'pi_sdk/pi_payment#approve'
+  post '/pi_payment/complete', to: 'pi_sdk/pi_payment#complete'
+  post '/pi_payment/cancel',   to: 'pi_sdk/pi_payment#cancel'
+  post '/pi_payment/error',    to: 'pi_sdk/pi_payment#error'
+  post '/pi_payment/incomplete', to: 'pi_sdk/pi_payment#incomplete'
+  get  '/pi_payment/me',       to: 'pi_sdk/pi_payment#me'
 end

@@ -1,6 +1,6 @@
 require 'rails/generators/base'
 
-class Pinetwork::InstallGenerator < Rails::Generators::Base
+class PiSdk::InstallGenerator < Rails::Generators::Base
   source_root File.expand_path('templates', __dir__)
 
   desc 'Adds Pi Network engine configuration, routes, gem dependencies, and callback stubs to your app.'
@@ -15,13 +15,13 @@ class Pinetwork::InstallGenerator < Rails::Generators::Base
 
   def add_engine_routes
     routes = File.read("config/routes.rb")
-    unless routes.include?('mount Pinetwork::Rails::Engine')
+    unless routes.include?('mount PiSdk::Engine')
       inject_into_file "config/routes.rb", after: "Rails.application.routes.draw do\n" do
-        "  mount Pinetwork::Rails::Engine => \"/pinetwork-rails\"\n"
+        "  mount PiSdk::Engine => \"/pinetwork-rails\"\n"
       end
-      say "[Pinetwork] Mounted engine route in config/routes.rb", :green
+      say "[PiSdk] Mounted engine route in config/routes.rb", :green
     else
-      say "[Pinetwork] Engine mount already exists in config/routes.rb", :yellow
+      say "[PiSdk] Engine mount already exists in config/routes.rb", :yellow
     end
   end
 
@@ -32,9 +32,9 @@ class Pinetwork::InstallGenerator < Rails::Generators::Base
       inject_into_file "config/routes.rb", after: "Rails.application.routes.draw do\n" do
         routes_block
       end
-      say "[Pinetwork] Added default Pi payment routes to config/routes.rb", :green
+      say "[PiSdk] Added default Pi payment routes to config/routes.rb", :green
     else
-      say "[Pinetwork] Pi payment routes already present in config/routes.rb", :yellow
+      say "[PiSdk] Pi payment routes already present in config/routes.rb", :yellow
     end
   end
 

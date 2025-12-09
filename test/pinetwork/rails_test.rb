@@ -1,7 +1,7 @@
 require "test_helper"
 
-class Pinetwork::RailsTest < ActiveSupport::TestCase
+class PiSdkTest < ActiveSupport::TestCase
   test "it has a version number" do
-    assert Pinetwork::Rails::VERSION
+    assert PiSdk::VERSION
   end
 end

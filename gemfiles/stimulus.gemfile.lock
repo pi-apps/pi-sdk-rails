@@ -1,7 +1,7 @@
 PATH
   remote: ..
   specs:
-    pinetwork-rails (0.1.0)
+    pi-sdk-rails (0.1.0)
       rails (>= 8.1.1)
 
 GEM
@@ -290,7 +290,7 @@ PLATFORMS
 DEPENDENCIES
   appraisal (>= 2.5.0)
   importmap-rails (~> 2.2)
-  pinetwork-rails!
+  pi-sdk-rails!
   propshaft
   puma
   rspec-rails (~> 8.0.2)

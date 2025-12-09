@@ -1,5 +1,5 @@
 # Example Pi network callbacks controller
-class PiNetworkCallbacks < Pinetwork::Rails::PiPaymentController
+class PiNetworkCallbacks < PiSdk::PiPaymentController
   # Called on successful approval
   # params: Hash with keys :paymentId, :accessToken; see controller action docs for specifics
   def on_approve_success(params, response)

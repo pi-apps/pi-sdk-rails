@@ -1,6 +1,6 @@
 require 'rails/generators'
 
-module Pinetwork
+module PiSdk
   class PiTransactionGenerator < ::Rails::Generators::Base
     source_root File.expand_path('templates', __dir__)
     argument :order, type: :string, default: 'order', banner: 'order:ORDER_CLASS'
@@ -37,7 +37,7 @@ module Pinetwork
 
     def inject_concern_into_model
       inject_into_class "app/models/pi_transaction.rb", "PiTransaction" do
-        "  include Pinetwork::Rails::PiTransactionBehavior\n"
+        "  include PiSdk::PiTransactionBehavior\n"
       end
 
       model_file = "app/models/pi_transaction.rb"

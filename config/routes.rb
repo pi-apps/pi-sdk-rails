@@ -1,2 +1,2 @@
-Pinetwork::Rails::Engine.routes.draw do
+PiSdk::Engine.routes.draw do
 end

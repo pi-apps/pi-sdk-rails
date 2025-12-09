@@ -1,10 +1,10 @@
-class Pinetwork::InstallGenerator < Rails::Generators::Base
+class PiSdk::InstallGenerator < Rails::Generators::Base
   source_root File.expand_path("templates", __dir__)
 end
 
 require 'rails/generators/base'
 
-module Pinetwork
+module PiSdk
 #  module Generators
     class xInstallGenerator < Rails::Generators::Base
       source_root File.expand_path('templates', __dir__)
@@ -17,13 +17,13 @@ module Pinetwork
 
       def add_engine_routes
         routes = File.read("config/routes.rb")
-        unless routes.include?('mount Pinetwork::Rails::Engine')
+        unless routes.include?('mount PiSdk::Engine')
           inject_into_file "config/routes.rb", after: "Rails.application.routes.draw do\n" do
-            "  mount Pinetwork::Rails::Engine => \"/pinetwork-rails\"\n"
+            "  mount PiSdk::Engine => \"/pinetwork-rails\"\n"
           end
-          say "[Pinetwork] Mounted engine route in config/routes.rb", :green
+          say "[PiSdk] Mounted engine route in config/routes.rb", :green
         else
-          say "[Pinetwork] Engine mount already exists in config/routes.rb", :yellow
+          say "[PiSdk] Engine mount already exists in config/routes.rb", :yellow
         end
       end
 
@@ -43,15 +43,15 @@ RUBY
           inject_into_file "config/routes.rb", after: "Rails.application.routes.draw do\n" do
             pi_routes_block
           end
-          say "[Pinetwork] Added default Pi payment routes to config/routes.rb", :green
+          say "[PiSdk] Added default Pi payment routes to config/routes.rb", :green
         else
-          say "[Pinetwork] Pi payment routes already present in config/routes.rb", :yellow
+          say "[PiSdk] Pi payment routes already present in config/routes.rb", :yellow
         end
       end
 
       def show_readme
-        say "\n[Pinetwork] Installed config/pinetwork.yml. Edit it to set your Pi Network API key(s).\n", :green
-        say "[Pinetwork] Make sure your app's config/routes.rb includes the engine mount and default pi_payment endpoints (added automatically unless present).\n", :green
+        say "\n[PiSdk] Installed config/pinetwork.yml. Edit it to set your Pi Network API key(s).\n", :green
+        say "[PiSdk] Make sure your app's config/routes.rb includes the engine mount and default pi_payment endpoints (added automatically unless present).\n", :green
       end
     end
 

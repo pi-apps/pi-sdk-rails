@@ -1,5 +1,5 @@
 # Subclass to override Pi payment callbacks
-class PiNetworkCallbacks < Pinetwork::Rails::PiPaymentController
+class PiNetworkCallbacks < PiSdk::PiPaymentController
   # --- Approval Callbacks ---
 
   # params: { paymentId:, accessToken: }
