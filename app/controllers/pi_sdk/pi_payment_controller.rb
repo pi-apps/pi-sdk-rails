@@ -7,7 +7,7 @@ require 'json'
 module PiSdk
   module ApiConfig
     def api_config
-      ::Rails.application.config_for(:pinetwork)
+      ::Rails.application.config_for(:pi_sdk)
     end
     def api_url_base;   api_config['api_url_base'];   end
     def api_version;    api_config['api_version'];    end
@@ -17,7 +17,7 @@ module PiSdk
 
   class PiPaymentController < ApplicationController
     include ApiConfig
-    # NOTE: All critical Pi API config is now read dynamically from config/pinetwork.yml using the ApiConfig module.
+    # NOTE: All critical Pi API config is now read dynamically from config/pi-sdk.yml using the ApiConfig module.
     # You can override api_url_base, api_version, api_controller, and api_key in your config files.
 
     before_action :ensure_json_request
@@ -152,7 +152,7 @@ module PiSdk
     # POST /pi_payment/incomplete
     # Params:
     #   - paymentId      [String] (required): The Pi payment ID.
-    #   - transactionId  [String] (required): The transaction ID from Pi network.
+    #   - transactionId  [String] (required): The transaction ID from Pi SDK.
     # Handles incomplete payments. The default incomplete_callback returns :complete.
     # Host apps can override incomplete_callback to implement custom review logic.
     # If the callback returns :complete, the server completes the payment;
@@ -247,7 +247,7 @@ module PiSdk
       head :not_acceptable
     end
 
-    # Makes a POST request to the Pi Network server for a given action.
+    # Makes a POST request to the Pi SDK server for a given action.
     #
     # @param action     [String]   The Pi API action (approve, complete, error, etc.)
     # @param payment_id [String]   The payment ID this request concerns.

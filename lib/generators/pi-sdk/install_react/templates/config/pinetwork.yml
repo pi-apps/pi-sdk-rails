@@ -1,0 +1,25 @@
+# Pi Network Engine Configuration
+#
+# NEVER commit real API keys to public repositories!
+# Define all Pi API config centrally in _shared and merge into every environment.
+# You can override api_key, api_url_base, api_version, or api_controller in any environment if needed.
+
+_shared: &shared_pi
+  # Safe: loads from environment, never commit or hard-code secrets!
+  api_key: <%= ENV.fetch("PI_API_KEY") { "" } %>
+  api_url_base: "https://api.minepi.com"
+  api_version: "v2"
+  api_controller: "payments"
+
+# Your ngrok or app hostnames for each environment should be listed here.
+development:
+  <<: *shared_pi
+  hostnames: [your-app.com, localhost]
+
+production:
+  <<: *shared_pi
+  hostnames: [your-app.com]
+
+test:
+  <<: *shared_pi
+  hostnames: [your-app.com, localhost]
