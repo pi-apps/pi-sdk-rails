@@ -29,7 +29,8 @@ class PiSdk::InstallGenerator < Rails::Generators::Base
     routes = File.read("config/routes.rb")
     routes_block = File.read(File.expand_path('templates/pi_payment_routes.rb', __dir__))
     unless routes.include?('/pi_payment/approve')
-      inject_into_file "config/routes.rb", after: "Rails.application.routes.draw do\n" do
+      inject_into_file "config/routes.rb", after: "  mount PiSdk::Engine => \"/pi-sdk-rails\"\n" do
+        #"Rails.application.routes.draw do\n" do
         routes_block
       end
       say "[PiSdk] Added default Pi payment routes to config/routes.rb", :green

@@ -1,12 +1,12 @@
-// @pi_network_controller.js - EnginePinetworkController
+// @pi_sdk_controller.js - EnginePiSdkController
 // Subclass this Stimulus controller in your host app to customize Pi payment lifecycle integration.
 //
 // == Customization Guide ==
 //
-// To customize the Pi Network payment integration, create a subclass in your app (e.g. `PinetworkController`):
+// To customize the Pi Sdk payment integration, create a subclass in your app (e.g. `PiSdkController`):
 //
-//   import { EnginePinetworkController } from 'pinetwork/controllers/pinetwork_controller'
-//   export default class PinetworkController extends EnginePinetworkController {
+//   import { EnginePiSdkController } from 'pi_sdk/controllers/pi_sdk_controller'
+//   export default class PiSdkController extends EnginePiSdkController {
 //     // Optional: override to react to successful SDK connection
 //     onConnection() {
 //       // Your custom code here...
@@ -20,10 +20,10 @@
 
 import { Controller } from "@hotwired/stimulus"
 
-export class EnginePinetworkController extends Controller {
+export class EnginePiSdkController extends Controller {
   static paymentBasePath = 'pi_payment';   // App can override by subclassing
   static accessToken = null; // Store after authenticate for static callbacks
-  static logPrefix = '[Pinetwork]';
+  static logPrefix = '[PiSdk]';
   static log(...args) {
     console.log(this.logPrefix, ...args);
   }
@@ -46,7 +46,7 @@ export class EnginePinetworkController extends Controller {
    * @returns {Promise<object>} Parsed JSON response
    */
   static async postToServer(path, body) {
-    const base = this.paymentBasePath || EnginePinetworkController.paymentBasePath;
+    const base = this.paymentBasePath || EnginePiSdkController.paymentBasePath;
     const resp = await fetch(`${base}/${path}`, {
       method: "POST",
       headers: {
@@ -75,7 +75,7 @@ export class EnginePinetworkController extends Controller {
     try {
       const authResponse = await Pi.authenticate(
         ["payments", "username"],
-        EnginePinetworkController.onIncompletePaymentFound
+        EnginePiSdkController.onIncompletePaymentFound
       );
       this.accessToken = authResponse.accessToken;
       this.user = authResponse.user;
@@ -90,58 +90,58 @@ export class EnginePinetworkController extends Controller {
 
   static async onReadyForServerApproval(paymentId, accessToken) {
     if (!paymentId) {
-      EnginePinetworkController.error("Approval: missing paymentId");
+      EnginePiSdkController.error("Approval: missing paymentId");
       return;
     }
     if (!accessToken) {
-      EnginePinetworkController.error("Approval: missing accessToken");
+      EnginePiSdkController.error("Approval: missing accessToken");
       return;
     }
     try {
-      const data = await EnginePinetworkController.postToServer("approve", { paymentId, accessToken });
-      EnginePinetworkController.log("approve:", data);
+      const data = await EnginePiSdkController.postToServer("approve", { paymentId, accessToken });
+      EnginePiSdkController.log("approve:", data);
     } catch(err) {
-      EnginePinetworkController.error("approve error", err);
+      EnginePiSdkController.error("approve error", err);
     }
   }
 
   static async onReadyForServerCompletion(paymentId, transactionId) {
     if (!paymentId || !transactionId) {
-      EnginePinetworkController.error("Completion: missing ids");
+      EnginePiSdkController.error("Completion: missing ids");
       return;
     }
     try {
-      const data = await EnginePinetworkController.postToServer("complete", { paymentId, transactionId });
-      EnginePinetworkController.log("complete:", data);
+      const data = await EnginePiSdkController.postToServer("complete", { paymentId, transactionId });
+      EnginePiSdkController.log("complete:", data);
     } catch(err) {
-      EnginePinetworkController.error("complete error", err);
+      EnginePiSdkController.error("complete error", err);
     }
   }
 
   static async onCancel(paymentId) {
     if (!paymentId) {
-      EnginePinetworkController.error("Cancel: missing paymentId");
+      EnginePiSdkController.error("Cancel: missing paymentId");
       return;
     }
     try {
-      const data = await EnginePinetworkController.postToServer("cancel", { paymentId });
-      EnginePinetworkController.log("cancel:", data);
+      const data = await EnginePiSdkController.postToServer("cancel", { paymentId });
+      EnginePiSdkController.log("cancel:", data);
     } catch(err) {
-      EnginePinetworkController.error("cancel error", err);
+      EnginePiSdkController.error("cancel error", err);
     }
   }
 
   static async onError(error, paymentDTO) {
     const paymentId = paymentDTO?.identifier;
     if (!paymentId || !paymentDTO) {
-      EnginePinetworkController.error("Error: missing ids", error, paymentDTO);
+      EnginePiSdkController.error("Error: missing ids", error, paymentDTO);
       return;
     }
     try {
-      const data = await EnginePinetworkController.postToServer("error", { paymentId, error });
-      EnginePinetworkController.log("error:", data);
+      const data = await EnginePiSdkController.postToServer("error", { paymentId, error });
+      EnginePiSdkController.log("error:", data);
     } catch(err) {
-      EnginePinetworkController.error("error post", err);
+      EnginePiSdkController.error("error post", err);
     }
   }
 
@@ -149,14 +149,14 @@ export class EnginePinetworkController extends Controller {
     const paymentId = paymentDTO?.identifier;
     const transactionId = paymentDTO?.transaction?.txid || null;
     if (!paymentId) {
-      EnginePinetworkController.error("Incomplete: missing paymentId");
+      EnginePiSdkController.error("Incomplete: missing paymentId");
       return;
     }
     try {
-      const data = await EnginePinetworkController.postToServer("incomplete", { paymentId, transactionId });
-      EnginePinetworkController.log("incomplete:", data);
+      const data = await EnginePiSdkController.postToServer("incomplete", { paymentId, transactionId });
+      EnginePiSdkController.log("incomplete:", data);
     } catch(err) {
-      EnginePinetworkController.error("incomplete post error", err);
+      EnginePiSdkController.error("incomplete post error", err);
     }
   }
 
@@ -178,16 +178,16 @@ export class EnginePinetworkController extends Controller {
     }
 
     const onReadyForServerApproval = (paymentId) => {
-      EnginePinetworkController.onReadyForServerApproval(paymentId, this.accessToken);
+      EnginePiSdkController.onReadyForServerApproval(paymentId, this.accessToken);
     }
     Pi.createPayment(
       paymentData,
       {
 	"onReadyForServerApproval": onReadyForServerApproval,
-	"onReadyForServerCompletion": EnginePinetworkController.onReadyForServerCompletion,
-	"onCancel": EnginePinetworkController.onCancel,
-	"onError": EnginePinetworkController.onError,
-	"onIncompletePaymentFound": EnginePinetworkController.onIncompletePaymentFound
+	"onReadyForServerCompletion": EnginePiSdkController.onReadyForServerCompletion,
+	"onCancel": EnginePiSdkController.onCancel,
+	"onError": EnginePiSdkController.onError,
+	"onIncompletePaymentFound": EnginePiSdkController.onIncompletePaymentFound
       }
     );
   }

@@ -1,19 +1,19 @@
 import { Application } from "@hotwired/stimulus";
-import { EnginePinetworkController } from "./pinetwork_controller";
+import { EnginePisdkController } from "./pi_sdk_controller";
 
 global.Pi = {
   init: jest.fn(),
   authenticate: jest.fn(),
 };
 
-describe("EnginePinetworkController#connect", () => {
+describe("EnginePiSdkController#connect", () => {
   let element, app, controllerInstance;
 
   beforeEach(() => {
-    document.body.innerHTML = `<div data-controller="pinetwork"></div>`;
-    element = document.querySelector("[data-controller='pinetwork']");
+    document.body.innerHTML = `<div data-controller="pisdk"></div>`;
+    element = document.querySelector("[data-controller='pisdk']");
     app = Application.start();
-    app.register("pinetwork", EnginePinetworkController);
+    app.register("pisdk", EnginePiSdkController);
     Pi.init.mockClear();
     Pi.authenticate.mockClear();
     Pi.authenticate.mockImplementation(() =>
@@ -27,7 +27,7 @@ describe("EnginePinetworkController#connect", () => {
   });
 
   function getControllerInstance() {
-    return app.getControllerForElementAndIdentifier(element, "pinetwork");
+    return app.getControllerForElementAndIdentifier(element, "pisdk");
   }
 
   it("calls Pi.init with correct options", async () => {
