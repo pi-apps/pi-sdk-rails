@@ -1,4 +1,4 @@
-# Pi Network Engine Configuration
+# Pi SDK Engine Configuration
 #
 # NEVER commit real API keys to public repositories!
 # Define all Pi API config centrally in _shared and merge into every environment.

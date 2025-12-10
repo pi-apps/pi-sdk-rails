@@ -8,7 +8,7 @@ require 'json'
 module PiSdk
   module ApiConfig
     def api_config
-      ::Rails.application.config_for(:pinetwork)
+      ::Rails.application.config_for(:pi_sdk)
     end
     def api_url_base;   api_config['api_url_base'];   end
     def api_version;    api_config['api_version'];    end

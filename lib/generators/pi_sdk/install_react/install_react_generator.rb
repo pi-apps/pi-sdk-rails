@@ -3,21 +3,21 @@ require 'rails/generators/base'
 class PiSdk::InstallReactGenerator < Rails::Generators::Base
   source_root File.expand_path('templates', __dir__)
 
-  desc 'Adds Pi Network engine configuration for React/JSBundling (esbuild), routes, callback stubs, and Pi SDK integration to your app.'
+  desc 'Adds Pi Sdk engine configuration for React/JSBundling (esbuild), routes, callback stubs, and Pi SDK integration to your app.'
 
   def copy_config
-    copy_file 'config/pinetwork.yml', 'config/pinetwork.yml'
+    copy_file 'config/pi_sdk.yml', 'config/pi_sdk.yml'
   end
 
   def copy_initializer
-    template 'config/initializers/pinetwork.rb', 'config/initializers/pinetwork.rb'
+    template 'config/initializers/pi-sdk.rb', 'config/initializers/pi-sdk.rb'
   end
 
   def add_engine_routes
     routes = File.read('config/routes.rb')
     unless routes.include?('mount PiSdk::Engine')
       inject_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do
-        "  mount PiSdk::Engine => \"/pinetwork-rails\"\n"
+        "  mount PiSdk::Engine => \"/pisdk-rails\"\n"
       end
       say '[PiSdk] Mounted engine route in config/routes.rb', :green
     else
@@ -44,34 +44,35 @@ class PiSdk::InstallReactGenerator < Rails::Generators::Base
   end
 
   def add_controller_callback_stub
-    stub = File.read(File.expand_path('templates/pi_network_callbacks.rb', __dir__))
-    create_file 'app/controllers/pi_network_callbacks.rb', stub
+    stub = File.read(File.expand_path('templates/pi_sdk_callbacks.rb', __dir__))
+    create_file 'app/controllers/pi_sdk_callbacks.rb', stub
   end
 
   def show_js_todo
-    say "\n[TODO] Please add/modify your app/javascript/controllers or components as needed for Pi integration.", :yellow
-    say "\nYou now have a pinetwork_controller.js for customization. Import it in your relevant entrypoint.", :yellow
+    say "\n[TODO] Please add/modify your app/javascript/components as needed for Pi integration.", :yellow
+    say "\nYou now have a PiButton.jsx for customization. Use it in your relevant entrypoint.", :yellow
   end
 
   # No importmap or import injecting for React/esbuild
 
-  def copy_stimulus_controller
-    target_path = 'app/javascript/controllers/pinetwork_controller.js'
-    unless File.exist?(target_path)
-      FileUtils.mkdir_p(File.dirname(target_path))
-      copy_file 'pinetwork_controller.js', target_path
-      say "Copied pinetwork_controller.js to #{target_path}", :green
-    else
-      say 'pinetwork_controller.js already exists at #{target_path}', :yellow
-    end
-  end
+  #def copy_stimulus_controller
+  #  target_path = 'app/javascript/controllers/pi_sdk_controller.js'
+  #  unless File.exist?(target_path)
+  #    FileUtils.mkdir_p(File.dirname(target_path))
+  #    copy_file 'pi_sdk_controller.js', target_path
+  #    say "Copied pi_sdk_controller.js to #{target_path}", :green
+  #  else
+  #    say 'pisdk_controller.js already exists at #{target_path}', :yellow
+  #  end
+  #end
 
   def copy_react_components
     components_dir = 'app/javascript/components'
     FileUtils.mkdir_p(components_dir) unless File.exist?(components_dir)
 
-    react_files = ['PiNetwork.jsx', 'pi_network_base.js', 'PiNetworkComponent.jsx']
+    react_files = ['index.jsx', 'PiButton.jsx', 'pi_sdk_base.js', 'PiSdkComponent.jsx']
     react_files.each do |fname|
+      say "moving #{fname}"
       target_path = File.join(components_dir, fname)
       unless File.exist?(target_path)
         copy_file fname, target_path

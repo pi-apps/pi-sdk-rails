@@ -6,7 +6,7 @@ class PiSdk::InstallGenerator < Rails::Generators::Base
   desc 'Adds Pi SDK engine configuration, routes, gem dependencies, and callback stubs to your app.'
 
   def copy_config
-    copy_file 'config/pi-sdk.yml', 'config/pi-sdk.yml'
+    copy_file 'config/pi_sdk.yml', 'config/pi_sdk.yml'
   end
 
   def copy_initializer
