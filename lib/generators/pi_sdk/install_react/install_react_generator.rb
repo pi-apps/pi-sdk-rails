@@ -1,172 +1,62 @@
 require 'rails/generators/base'
 
-class PiSdk::InstallReactGenerator < Rails::Generators::Base
-  source_root File.expand_path('templates', __dir__)
+module PiSdk
+  class InstallReactGenerator < ::Rails::Generators::Base
+    desc "Sets up React frontend for Pi SDK. Installs all backend config, adds npm pi-sdk-react package, and uses plop to scaffold PiButton.jsx."
 
-  desc 'Adds Pi Sdk engine configuration for React/JSBundling (esbuild), routes, callback stubs, and Pi SDK integration to your app.'
-
-  def copy_config
-    copy_file 'config/pi_sdk.yml', 'config/pi_sdk.yml'
-  end
-
-  def copy_initializer
-    template 'config/initializers/pi-sdk.rb', 'config/initializers/pi-sdk.rb'
-  end
-
-  def add_engine_routes
-    routes = File.read('config/routes.rb')
-    unless routes.include?('mount PiSdk::Engine')
-      inject_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do
-        "  mount PiSdk::Engine => \"/pisdk-rails\"\n"
-      end
-      say '[PiSdk] Mounted engine route in config/routes.rb', :green
-    else
-      say '[PiSdk] Engine mount already exists in config/routes.rb', :yellow
+    def run_backend_setup
+      invoke "pi_sdk:install_base"
     end
-  end
 
-  def add_pi_payment_routes
-    routes = File.read('config/routes.rb')
-    routes_block = File.read(File.expand_path('templates/pi_payment_routes.rb', __dir__))
-    unless routes.include?('/pi_payment/approve')
-      inject_into_file 'config/routes.rb', after: "Rails.application.routes.draw do\n" do
-        routes_block
+    def install_react_npm_package
+      pkg = "pi-sdk-react"
+      if __dir__.include?("pi-sdk-internal")
+        pkg = "file:#{File.expand_path("../../../../../react", __dir__)}"
       end
-      say '[PiSdk] Added default Pi payment routes to config/routes.rb', :green
-    else
-      say '[PiSdk] Pi payment routes already present in config/routes.rb', :yellow
+      puts "[Pi SDK React] Installing #{pkg} from npm (this also pulls in pi-sdk-js)..."
+      system("yarn add #{pkg}") ||
+        system("npm install #{pkg}")
     end
-  end
 
-  # No gem management for JSbundling/React
-  def add_gems
-    say '[PiSdk] (JSbundling/React) Skipping Gem dependencies. Please ensure jsbundling-rails, esbuild, and React are installed.', :yellow
-  end
+    def run_plop_install
+      components_dir = File.expand_path("app/javascript/components",
+                                        destination_root)
+      FileUtils.mkdir_p(components_dir) unless Dir.exist?(components_dir)
+      plopfile = File.expand_path("node_modules/pi-sdk-react/plopfile.js", destination_root)
+      puts "[Pi SDK React] Running Plop to scaffold PiButton.jsx with plopfile at #{plopfile}, output: #{components_dir}"
+      Dir.chdir(components_dir) do
+        cmd = "npx plop pi-sdk:install --plopfile \"#{plopfile}\" --dest ."
+        puts cmd
+        system(cmd)
+      end
+    end
 
-  def add_controller_callback_stub
-    stub = File.read(File.expand_path('templates/pi_sdk_callbacks.rb', __dir__))
-    create_file 'app/controllers/pi_sdk_callbacks.rb', stub
-  end
+    def copy_components_files
+      components_dir = File.expand_path("app/javascript/components",
+                                        destination_root)
+      # Copy index.jsx
+      template_path = File.expand_path("../templates/index.jsx", __FILE__)
+      dest_path = File.join(components_dir, "index.jsx")
+      FileUtils.cp(template_path, dest_path)
+      puts "[Pi SDK React] Copied index.jsx to #{dest_path}"
+    end
 
-  def show_js_todo
-    say "\n[TODO] Please add/modify your app/javascript/components as needed for Pi integration.", :yellow
-    say "\nYou now have a PiButton.jsx for customization. Use it in your relevant entrypoint.", :yellow
-  end
-
-  # No importmap or import injecting for React/esbuild
-
-  #def copy_stimulus_controller
-  #  target_path = 'app/javascript/controllers/pi_sdk_controller.js'
-  #  unless File.exist?(target_path)
-  #    FileUtils.mkdir_p(File.dirname(target_path))
-  #    copy_file 'pi_sdk_controller.js', target_path
-  #    say "Copied pi_sdk_controller.js to #{target_path}", :green
-  #  else
-  #    say 'pisdk_controller.js already exists at #{target_path}', :yellow
-  #  end
-  #end
-
-  def copy_react_components
-    components_dir = 'app/javascript/components'
-    FileUtils.mkdir_p(components_dir) unless File.exist?(components_dir)
-
-    react_files = ['index.jsx', 'PiButton.jsx', 'pi_sdk_base.js', 'PiSdkComponent.jsx']
-    react_files.each do |fname|
-      say "moving #{fname}"
-      target_path = File.join(components_dir, fname)
-      unless File.exist?(target_path)
-        copy_file fname, target_path
-        say "Copied #{fname} to #{target_path}", :green
+    def ensure_components_import_in_application_js
+      js_file = 'app/javascript/application.js'
+      return unless File.exist?(js_file)
+      content = File.read(js_file)
+      import_line = 'import "./components"'
+      unless content.include?(import_line)
+        File.open(js_file, 'a') { |f| f.puts(import_line) }
+        say("Added 'import \"./components\"' to #{js_file}", :green)
       else
-        say "#{fname} already exists at #{target_path}", :yellow
+        say("'import \"./components\"' already present in #{js_file}", :yellow)
       end
     end
-  end
 
-  def copy_index_jsx
-    components_dir = 'app/javascript/components'
-    FileUtils.mkdir_p(components_dir) unless File.exist?(components_dir)
-    target_path = File.join(components_dir, 'index.jsx')
-    unless File.exist?(target_path)
-      copy_file 'index.jsx', target_path
-      say "Copied index.jsx to #{target_path}", :green
-    else
-      say "index.jsx already exists at #{target_path}", :yellow
+    def post_install_message
+      puts "[Pi SDK React] React frontend support installed. " \
+           "Add <PiButton /> to your UI as needed."
     end
-  end
-
-  def ensure_components_import_in_application_js
-    js_file = 'app/javascript/application.js'
-    return unless File.exist?(js_file)
-    content = File.read(js_file)
-    import_line = 'import "./components"'
-    unless content.include?(import_line)
-      File.open(js_file, 'a') { |f| f.puts(import_line) }
-      say("Added 'import \"./components\"' to #{js_file}", :green)
-    else
-      say("'import \"./components\"' already present in #{js_file}", :yellow)
-    end
-  end
-
-  def add_pi_sdk_script_tag
-    layout_file = 'app/views/layouts/application.html.erb'
-    return unless File.exist?(layout_file)
-    contents = File.read(layout_file)
-    sdk_script = '<script src="https://sdk.minepi.com/pi-sdk.js"></script>'
-    if contents.include?(sdk_script)
-      say 'Pi SDK <script> tag already present in #{layout_file}', :yellow
-      return
-    end
-    lines = contents.lines
-    insert_index = lines.index { |l| l.include?('javascript_importmap_tags') }
-    # For React/Vite/etc, still insert after importmaps (if present), otherwise after <head>
-    insert_index ||= lines.index { |l| l =~ /<head[^>]*>/ }
-    if insert_index
-      lines.insert(insert_index + 1, "    #{sdk_script}\n")
-      File.write(layout_file, lines.join)
-      say 'Inserted Pi SDK <script> tag after importmap_tags or <head> in #{layout_file}', :green
-    else
-      say 'Could not find reference point in #{layout_file}; Pi SDK script not added.', :red
-    end
-  end
-
-  def add_rails_env_script_tag
-    layout_file = 'app/views/layouts/application.html.erb'
-    return unless File.exist?(layout_file)
-    contents = File.read(layout_file)
-    env_script = '<script>window.RAILS_ENV = "<%= Rails.env %>";</script>'
-    if contents.include?(env_script)
-      say 'RAILS_ENV <script> tag already present in #{layout_file}', :yellow
-      return
-    end
-    sdk_script = '<script src="https://sdk.minepi.com/pi-sdk.js"></script>'
-    lines = contents.lines
-    insert_index = lines.index { |l| l.include?(sdk_script) }
-    # Otherwise, after <head>
-    insert_index ||= lines.index { |l| l =~ /<head[^>]*>/ }
-    if insert_index
-      lines.insert(insert_index + 1, "    #{env_script}\n")
-      File.write(layout_file, lines.join)
-      say 'Inserted RAILS_ENV <script> tag after Pi SDK script or <head> in #{layout_file}', :green
-    else
-      say 'Could not find reference point in #{layout_file}; RAILS_ENV script not added.', :red
-    end
-  end
-
-  def self.call_all_methods
-    gen = new
-    gen.copy_config
-    gen.copy_initializer
-    gen.add_engine_routes
-    gen.add_pi_payment_routes
-    gen.add_gems
-    gen.add_controller_callback_stub
-    gen.show_js_todo
-    gen.copy_stimulus_controller
-    gen.copy_react_components
-    gen.copy_index_jsx
-    gen.ensure_components_import_in_application_js
-    gen.add_pi_sdk_script_tag
-    gen.add_rails_env_script_tag
   end
 end

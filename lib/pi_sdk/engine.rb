@@ -18,7 +18,14 @@ module PiSdk
       g.test_framework :rspec
     end
 
-    initializer "pinetwork-rails.importmap", before: "importmap" do |app|
+    initializer "pi-sdk-rails.assets",
+                after: "importmap.assets.paths" do |app|
+      if app.config.respond_to?(:assets)
+        app.config.assets.paths << root.join("app/javascript/pi_sdk")
+      end
+    end
+
+    initializer "pi-sdk-rails.importmap", before: "importmap" do |app|
       # Only touch importmap if available
       if defined?(Importmap) &&
          app.config.respond_to?(:importmap) &&
