@@ -63,7 +63,7 @@ You can customize all Pi SDK lifecycle logic by subclassing the generated Stimul
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'pi-sdk-rails', path: '/absolute/path/to/pi-sdk-internal/rails_engine'
+gem 'pi-sdk-rails', git: 'https://github.com/pi-apps/pi-sdk-rails'
 ```
 (or replace with your git/registry source)
 
@@ -161,6 +161,10 @@ If you use React, Vite, or jsbundling-rails (esbuild, webpack), use the React in
 
 ```bash
 rails generate pi_sdk:install_react
+```
+To see the React button, add to `app/views/home/index.html.erb`:
+```html
+<div id="pi-sdk" />
 ```
 
 This copies React entrypoints/components to your app, with instructions included.
