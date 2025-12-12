@@ -9,7 +9,7 @@ module PiSdk
     end
 
     def install_react_npm_package
-      pkg = "pi-sdk-react"
+      pkg = "github:pi-apps/pi-sdk-react"
       if __dir__.include?("pi-sdk-internal")
         pkg = "file:#{File.expand_path("../../../../../react", __dir__)}"
       end
