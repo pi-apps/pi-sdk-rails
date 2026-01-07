@@ -5,7 +5,7 @@ rescue LoadError
   # importmap-rails is not installed; that's okay for jsbundling/React setups
 end
 
-require "pi_sdk/version"
+require_relative 'routing_extensions'
 
 module PiSdk
   class << self
@@ -18,11 +18,8 @@ module PiSdk
       g.test_framework :rspec
     end
 
-    initializer "pi-sdk-rails.assets",
-                after: "importmap.assets.paths" do |app|
-      if app.config.respond_to?(:assets)
-        app.config.assets.paths << root.join("app/javascript/pi_sdk")
-      end
+    initializer "pi-sdk-rails.routing_extensions" do
+      ActionDispatch::Routing::Mapper.include PiSdk::RoutingExtensions
     end
 
     initializer "pi-sdk-rails.importmap", before: "importmap" do |app|

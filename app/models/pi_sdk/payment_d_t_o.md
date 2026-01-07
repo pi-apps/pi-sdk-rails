@@ -53,7 +53,7 @@ sent via http.
 Use the provided hash keys as attributes.
 
 ## Testing/Updates
-- Canonical spec for test data is found at `spec/models/pinetwork/rails/payment_d_t_o_spec.rb`.
+- Canonical spec for test data is found at `spec/models/pi_sdk/payment_d_t_o_spec.rb`.
 - If the Pi API changes structure or adds keys, update this file and spec accordingly.
 
 ## Output and Test Practices
@@ -62,7 +62,7 @@ Use the provided hash keys as attributes.
 ## Usage Example (IRB/Console)
 ```ruby
 # Fetching
-payment = Pinetwork::Rails::PaymentDTO.get("PAYMENT_ID")
+payment = PiSdk::Rails::PaymentDTO.get("PAYMENT_ID")
 if payment
   puts payment.inspect
 else
@@ -71,4 +71,4 @@ end
 ```
 
 ## Note
-- This markdown file serves as the canonical developer spec for PaymentDTO value objects in pinetwork-rails. Developers should refer here when updating DTO logic or specs.
+- This markdown file serves as the canonical developer spec for PaymentDTO value objects in pi-sdk-rails. Developers should refer here when updating DTO logic or specs.

@@ -39,7 +39,7 @@ The UserDTO class encapsulates this hash with standard Ruby access methods. All 
 Example:
 ```
 {
-  "uid": "pinetwork_uid_45",
+  "uid": "pi-network_uid_45",
   "credentials": {
     "scopes": ["username", "payments"],
     "valid_until": {
@@ -52,7 +52,7 @@ Example:
 ```
 
 ## Testing/Updates
-- Canonical spec for test data is found at `spec/models/pinetwork/rails/user_d_t_o_spec.rb`.
+- Canonical spec for test data is found at `spec/models/pi_sdk/rails/user_d_t_o_spec.rb`.
 - If the Pi API changes structure or adds keys, update this file and spec accordingly.
 
 ## Output and Test Practices
@@ -61,7 +61,7 @@ Example:
 ## Usage Example (IRB/Console)
 ```ruby
 # Fetching
-user = Pinetwork::Rails::UserDTO.get("API_TOKEN_HERE")
+user = PiSdk::UserDTO.get("API_TOKEN_HERE")
 if user
   puts user.uid, user.username, user.scope_list
   puts "Token valid until: #{user.valid_until}"
@@ -71,4 +71,4 @@ end
 ```
 
 ## Note
-- This markdown file serves as the canonical developer spec for UserDTO value objects in pinetwork-rails. Developers should refer here when updating DTO logic or specs.
+- This markdown file serves as the canonical developer spec for UserDTO value objects in pi-sdk-rails. Developers should refer here when updating DTO logic or specs.

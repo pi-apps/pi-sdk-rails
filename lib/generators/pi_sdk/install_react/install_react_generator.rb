@@ -9,7 +9,8 @@ module PiSdk
     end
 
     def install_react_npm_package
-      pkg = "github:pi-apps/pi-sdk-react"
+      src = ENV["PI_NPM_SOURCE"] || "github:pi-apps"
+      pkg = "#{src}/pi-sdk-react"
       if __dir__.include?("pi-sdk-internal")
         pkg = "file:#{File.expand_path("../../../../../react", __dir__)}"
       end
@@ -18,17 +19,28 @@ module PiSdk
         system("npm install #{pkg}")
     end
 
-    def run_plop_install
+    # def run_plop_install
+    #   components_dir = File.expand_path("app/javascript/components",
+    #                                     destination_root)
+    #   FileUtils.mkdir_p(components_dir) unless Dir.exist?(components_dir)
+    #   plopfile = File.expand_path("node_modules/pi-sdk-react/plopfile.js", destination_root)
+    #   puts "[Pi SDK React] Running Plop to scaffold PiButton.jsx with plopfile at #{plopfile}, output: #{components_dir}"
+    #   Dir.chdir(components_dir) do
+    #     cmd = "npx plop pi-sdk:install --plopfile \"#{plopfile}\" --dest ."
+    #     puts cmd
+    #     system(cmd)
+    #   end
+    # end
+
+    def run_react_install
       components_dir = File.expand_path("app/javascript/components",
                                         destination_root)
       FileUtils.mkdir_p(components_dir) unless Dir.exist?(components_dir)
       plopfile = File.expand_path("node_modules/pi-sdk-react/plopfile.js", destination_root)
-      puts "[Pi SDK React] Running Plop to scaffold PiButton.jsx with plopfile at #{plopfile}, output: #{components_dir}"
-      Dir.chdir(components_dir) do
-        cmd = "npx plop pi-sdk:install --plopfile \"#{plopfile}\" --dest ."
-        puts cmd
-        system(cmd)
-      end
+      puts "[Pi SDK React] Running pi-sdk-react-install --dest #{components_dir}"
+      cmd = "./node_modules/.bin/pi-sdk-react-install --dest #{components_dir}"
+      puts cmd
+      system(cmd)
     end
 
     def copy_components_files
@@ -39,6 +51,7 @@ module PiSdk
       dest_path = File.join(components_dir, "index.jsx")
       FileUtils.cp(template_path, dest_path)
       puts "[Pi SDK React] Copied index.jsx to #{dest_path}"
+      puts Dir["#{components_dir}/*"].inspect
     end
 
     def ensure_components_import_in_application_js

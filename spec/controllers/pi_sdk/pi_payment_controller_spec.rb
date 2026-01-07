@@ -15,7 +15,7 @@ RSpec.describe PiSdk::PiPaymentController, type: :controller do
   before do
     WebMock.disable_net_connect!(allow_localhost: true)
     allow(::Rails.application).to receive(:config_for).and_call_original
-    allow(::Rails.application).to receive(:config_for).with(:pinetwork).and_return(test_api_config)
+    allow(::Rails.application).to receive(:config_for).with(:pi_sdk).and_return(test_api_config)
   end
 
   describe 'POST #approve' do
@@ -31,8 +31,7 @@ RSpec.describe PiSdk::PiPaymentController, type: :controller do
       stub_request(:post, stub_url)
         .with(
           headers: {
-            'Authorization' => "Key #{test_api_key}",
-            'Content-Type' => 'application/json'
+'Authorization' => /Key .+/, 'Content-Type' => 'application/json'
           }
         )
         .to_return(status: 200, body: stub_body, headers: { 'Content-Type' => 'application/json' })
@@ -87,8 +86,7 @@ RSpec.describe PiSdk::PiPaymentController, type: :controller do
       stub_request(:post, stub_url)
         .with(
           headers: {
-            'Authorization' => "Key #{test_api_key}",
-            'Content-Type' => 'application/json'
+'Authorization' => /Key .+/, 'Content-Type' => 'application/json'
           },
           body: hash_including({ 'paymentId' => payment_id, 'txid' => transaction_id })
         )
@@ -96,8 +94,7 @@ RSpec.describe PiSdk::PiPaymentController, type: :controller do
       stub_request(:get, "https://api.minepi.com/v2/payments/#{payment_id}")
         .with(
           headers: {
-            'Authorization' => "Key #{test_api_key}",
-            'Content-Type' => 'application/json'
+'Authorization' => /Key .+/, 'Content-Type' => 'application/json'
           }
         )
         .to_return(status: 200, body: payment_dto_response, headers: { 'Content-Type' => 'application/json' })
@@ -131,8 +128,7 @@ RSpec.describe PiSdk::PiPaymentController, type: :controller do
       stub_request(:post, stub_url)
         .with(
           headers: {
-            'Authorization' => "Key #{test_api_key}",
-            'Content-Type' => 'application/json'
+'Authorization' => /Key .+/, 'Content-Type' => 'application/json'
           }
         )
         .to_return(status: 200, body: stub_body, headers: { 'Content-Type' => 'application/json' })

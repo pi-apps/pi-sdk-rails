@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    pi-sdk-rails (0.1.0)
+    pi-sdk-rails (2.0.0)
       rails (>= 8.1.1)
 
 GEM

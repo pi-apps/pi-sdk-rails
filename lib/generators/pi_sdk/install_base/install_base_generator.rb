@@ -13,11 +13,8 @@ module PiSdk
     end
 
     def add_engine_routes
-      route "mount PiSdk::Engine => '/pi-sdk-rails'"
-    end
-
-    def add_pi_payment_routes
-      route File.read(File.expand_path("pi_payment_routes.rb", self.class.source_root))
+      route "mount PiSdk::Engine => '/pi-sdk'"
+      route "pi_sdk :payment  # adds POST routes, see config/pi_sdk.yml"
     end
 
     def add_controller_callbacks

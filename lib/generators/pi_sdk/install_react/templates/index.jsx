@@ -2,7 +2,7 @@
 console.log("loading index.jsx")
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import PiButton from './PiButton';
+import { PiButton } from './PiButton';
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootElement = document.getElementById('pi-sdk');
