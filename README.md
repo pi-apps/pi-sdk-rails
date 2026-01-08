@@ -58,6 +58,100 @@ This gem lets you quickly integrate the Pi Network payment/identity SDK into you
 
 ---
 
+## 📹 Video Script
+Here's are the commands used in the video for the Stimulus version.
+```bash
+# Create the app
+rails new tmtt
+
+cd tmtt
+
+# Add the gem to the app
+echo "gem 'pi-sdk-rails', git: 'https://github.com/pi-apps/pi-sdk-rails.git'" >> Gemfile
+bundle install
+
+# Generate the necessary local files
+rails generate pi_sdk:install
+
+# Set up an example button
+# Create a view and controller
+rails generate controller root index
+
+# Make the root#index root for tha app
+sed -i '' -e "s/# root \".*\"/root to: 'root#index'/" config/routes.rb
+
+# Add a Buy button to the end of the root#index page
+cat - >> app/views/root/index.html.erb <<HTML
+<div data-controller="pi-sdk">
+<button type="button" class="btn btn-primary" data-action="click->pi-sdk#buy" disabled data-pi-sdk-target="buyButton">
+Buy
+</button>
+</div>
+HTML
+
+# Make PI_API_KEY available
+source ../secrets
+
+# Run the app
+bin/dev
+
+# Add PiTransaction model to the app
+
+rails generate model User email
+rails generate model Order description:string
+rails generate pi_sdk:pi_transaction
+
+rake db:migrate
+
+# Run the app
+bin/dev
+```
+
+Here's are the commands used in the video for the React version.
+```bash
+# Create the app
+rails new tmtt
+
+cd tmtt
+
+# Add the gem to the app
+echo "gem 'pi-sdk-rails', git: 'https://github.com/pi-apps/pi-sdk-rails.git'" >> Gemfile
+bundle install
+
+# Generate the necessary local files
+rails generate pi_sdk:install_react
+
+# Set up an example button
+# Create a view and controller
+rails generate controller root index
+
+# Make the root#index root for tha app
+sed -i '' -e "s/# root \".*\"/root to: 'root#index'/" config/routes.rb
+
+# Add a Buy button to the end of the root#index page
+cat - >> app/views/root/index.html.erb <<HTML
+<div id="pi-sdk" />
+HTML
+
+# Make PI_API_KEY available
+source ../secrets
+
+# Run the app
+bin/dev
+
+# Add PiTransaction model to the app
+
+rails generate model User email
+rails generate model Order description:string
+rails generate pi_sdk:pi_transaction
+
+rake db:migrate
+
+# Run the app
+bin/dev
+```
+
+---
 ## ❓ FAQ
 
 ### How do I connect the frontend button to payment logic?
@@ -88,4 +182,3 @@ This generator sets up React/Vite entrypoints, JSX components, and avoids import
 - [Official Pi SDK Docs](https://developer.minepi.com/)
 - [Gem README & guides](https://github.com/pi-apps/pi-sdk-rails)
 - Your generated `app/controllers/pi_sdk/pi_payment_controller.rb` for server-side extension.
-
