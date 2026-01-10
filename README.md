@@ -59,7 +59,8 @@ This gem lets you quickly integrate the Pi Network payment/identity SDK into you
 ---
 
 ## 📹 Video Script
-Here's are the commands used in the video for the Stimulus version.
+You can watch a (video)[https://www.youtube.com/watch?v=cIFqf1Z5pRM&t=35s] describing the entire process.
+The commands used in the video for the Stimulus version appear below.
 ```bash
 # Create the app
 rails new tmtt
